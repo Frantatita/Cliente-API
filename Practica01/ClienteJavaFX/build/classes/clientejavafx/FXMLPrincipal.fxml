@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientejavafx.FXMLPrincipalController">
+   <children>
+      <Pane layoutX="9.0" layoutY="14.0" prefHeight="376.0" prefWidth="582.0">
+         <children>
+            <Button fx:id="cerrar" layoutX="481.0" layoutY="14.0" mnemonicParsing="false" onAction="#clickCerrarSesion" text="Cerrar Sesion" textFill="#070707" />
+            <Button fx:id="irColaborador" layoutX="234.0" layoutY="107.0" mnemonicParsing="false" onAction="#onActionIrColaborador" text="Ir al Administrador" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

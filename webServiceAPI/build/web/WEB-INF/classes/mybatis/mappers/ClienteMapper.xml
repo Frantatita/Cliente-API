@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cliente">
+
+    <select id="getClientes" resultType="pojo.Cliente">
+        SELECT idCliente,cliente.nombre,apellidoPaterno,apellidoMaterno,fechaNacimiento,telefono,peso,estatura,correo,cliente.idRol, rol.nombre as 'rol'
+        FROM cliente
+        INNER JOIN rol ON rol.idRol = cliente.idRol;
+    </select>
+    
+    <select id="getClientePorCorreo" resultType="pojo.Cliente">
+        SELECT idCliente,cliente.nombre,apellidoPaterno,apellidoMaterno,fechaNacimiento,telefono,peso,estatura,correo,cliente.idRol, rol.nombre as 'rol'
+        FROM cliente
+        INNER JOIN rol ON rol.idRol = cliente.idRol
+        WHERE correo = #{correo};
+    </select>
+
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="colaborador">
+
+    <select id="getColaboradores" resultType="pojo.Colaborador">
+        SELECT idColaborador,colaborador.nombre,apellidoPaterno,apellidoMaterno,fechaNacimiento,noPersonal,telefono,correo,rfc,curp,colaborador.idRol, rol.nombre as 'rol'
+        FROM colaborador
+        INNER JOIN rol ON rol.idRol = colaborador.idRol;
+    </select>
+    
+    <select id="getColaboradorPorNoPersonal" resultType="pojo.Colaborador">
+        SELECT idColaborador,colaborador.nombre,apellidoPaterno,apellidoMaterno,fechaNacimiento,noPersonal,telefono,correo,rfc,curp,colaborador.idRol, rol.nombre as 'rol'
+        FROM colaborador
+        INNER JOIN rol ON rol.idRol = colaborador.idRol
+        WHERE noPersonal = #{noPersonal};
+    </select>
+    
+    <insert id="registrar" parameterType="pojo.Colaborador">
+        INSERT INTO colaborador (nombre,apellidoPaterno,apellidoMaterno,fechaNacimiento,noPersonal,telefono,correo,rfc,curp,password,idRol)
+        VALUES (#{nombre},#{apellidoPaterno},#{apellidoMaterno},#{fechaNacimiento},#{noPersonal},#{telefono},#{correo},#{rfc},#{curp},#{password},#{idRol});
+    </insert>
+    
+    <update id="editar" parameterType="pojo.Colaborador">
+        UPDATE colaborador
+        SET nombre = #{nombre}, apellidoPaterno = #{apellidoPaterno},apellidoMaterno = #{apellidoMaterno},correo = #{correo},telefono = #{telefono},fechaNacimiento = #{fechaNacimiento},idRol = #{idRol}
+        WHERE noPersonal = #{noPersonal}
+    </update>
+
+    <delete id="eliminar" parameterType="String">
+        DELETE FROM colaborador
+        WHERE noPersonal = #{noPersonal}
+    </delete>
+    
+    
+
+
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <!--Entornos a trabajar -->
+    <environments default="development">
+        <environment id="development">
+            <!--Configuracion para la conexion  -->
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED" >
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/gymfort?serverTimezone=UTC"/>  
+                <property name="username" value="root"/>    
+                <property name="password" value="160216"/>
+                <property name="poolMaximumActiveConnections" value="50"/>
+            </dataSource>
+        </environment>
+    </environments>
+    
+    <!--Diccionarios de las operaciones que se utilizaran-->
+    <mappers>
+        <mapper resource="mybatis/mappers/LoginMapper.xml" /> 
+        <mapper resource="mybatis/mappers/ColaboradorMapper.xml"/>
+        <mapper resource="mybatis/mappers/ClienteMapper.xml"/>
+</mappers>
+</configuration>
