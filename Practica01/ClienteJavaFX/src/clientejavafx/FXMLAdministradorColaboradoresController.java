@@ -115,6 +115,7 @@ public class FXMLAdministradorColaboradoresController implements Initializable {
         if (listaWS != null) {
             colaboradores.addAll(listaWS);
             tablaColaborador.setItems(colaboradores);
+           // CerrarVentana();
         } else {
             Utilidades.mostrarAlertaSimple("ERROR", "Por el momento no podemos acceder a los datos de los"
                     + "colaboradores, intente mas tarde", Alert.AlertType.ERROR);

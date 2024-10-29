@@ -3,7 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/reyes/Documents/Agosto-Febrero%202025/IntegracionSoluciones/Practica01/ClienteJavaFX/src/clientejavafx/FXMLInicioSesionController.java</file>
+            <file>file:/C:/Users/reyes/Documents/Agosto-Febrero%202025/IntegracionSoluciones/Practica01/ClienteJavaFX/src/pojo/Colaborador.java</file>
+            <file>file:/C:/Users/reyes/Documents/Agosto-Febrero%202025/IntegracionSoluciones/Practica01/ClienteJavaFX/src/clientejavafx/FXMLFormularioColaboradoresController.java</file>
+            <file>file:/C:/Users/reyes/Documents/Agosto-Febrero%202025/IntegracionSoluciones/Practica01/ClienteJavaFX/src/modelo/ConexionWS.java</file>
+            <file>file:/C:/Users/reyes/Documents/Agosto-Febrero%202025/IntegracionSoluciones/Practica01/ClienteJavaFX/src/modelo/dao/ColaboradorDAO.java</file>
         </group>
     </open-files>
 </project-private>
