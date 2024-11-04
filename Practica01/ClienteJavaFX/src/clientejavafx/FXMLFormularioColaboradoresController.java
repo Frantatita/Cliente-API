@@ -5,8 +5,10 @@
  */
 package clientejavafx;
 
+import clientejavafx.observador.NotificadorOperacion;
 import clientejavafx.utilidades.Utilidades;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.Observable;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -58,6 +60,11 @@ public class FXMLFormularioColaboradoresController implements Initializable {
     @FXML
     private Button btnGuardar;
 
+    private NotificadorOperacion observador;
+    private Colaborador colaboradorEdicion;
+    private boolean modoEdicion = false;
+    public ObservableList<Rol> tiposColaboradores;
+
     /**
      * Initializes the controller class.
      */
@@ -68,10 +75,19 @@ public class FXMLFormularioColaboradoresController implements Initializable {
     }
 
     private void CargarTiposUsuarios() {
-        ObservableList<Rol> tiposColaboradores = FXCollections.observableArrayList();
+        tiposColaboradores = FXCollections.observableArrayList();
         tiposColaboradores.add(new Rol(1, "Colaborador"));
         tiposColaboradores.add(new Rol(2, "Cliente"));
         cbRol.setItems(tiposColaboradores);
+    }
+
+    private int buscarIdRol(int idRol) {
+        for (int i = 0; i < tiposColaboradores.size(); i++) {
+            if (tiposColaboradores.get(i).getIdRol() == idRol) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     @FXML
@@ -104,35 +120,78 @@ public class FXMLFormularioColaboradoresController implements Initializable {
         colaborador.setFechaNacimiento(fechaNacimiento);
         colaborador.setIdRol(idRol);
 
-        if(validarCampos(colaborador)){
-            guardarDatosColaborador(colaborador);
-        }else{
-            Utilidades.mostrarAlertaSimple("Campos obligatorios","Por favor llena todos los campos", Alert.AlertType.WARNING);
+        if (validarCampos(colaborador)) {
+            if (!modoEdicion) {
+                guardarDatosColaborador(colaborador);
+            }else{
+                colaborador.setIdColaborador(colaboradorEdicion.getIdColaborador());
+                editarDatosColaborador(colaborador);
+            }
+        } else {
+            Utilidades.mostrarAlertaSimple("Campos obligatorios", "Por favor llena todos los campos", Alert.AlertType.WARNING);
         }
-        
+
     }
 
     private boolean validarCampos(Colaborador colaborador) {
 
         return true;
     }
-  
-    
-    private void guardarDatosColaborador(Colaborador colaborador){
+
+    private void guardarDatosColaborador(Colaborador colaborador) {
         Mensaje mensaje = ColaboradorDAO.registrarColaborador(colaborador);
-        if(!mensaje.isError()){
-            Utilidades.mostrarAlertaSimple("Registro exitoso", "La informacion del colaborador: " 
-                    + colaborador.getNombre() + " fue registrado correctamente" , Alert.AlertType.INFORMATION);
+        if (!mensaje.isError()) {
+            Utilidades.mostrarAlertaSimple("Registro exitoso", "La informacion del colaborador: "
+                    + colaborador.getNombre() + " fue registrado correctamente", Alert.AlertType.INFORMATION);
             cerrarVentana();
-        }else{
+            observador.notificarOperacion("Nuevo registro", colaborador.getNombre());
+        } else {
             Utilidades.mostrarAlertaSimple("ERROR", mensaje.getMensaje(), Alert.AlertType.ERROR);
         }
-        
+
     }
-    
-    
-    private void cerrarVentana(){
+
+    private void editarDatosColaborador(Colaborador colaborador) {
+       Mensaje mensaje = ColaboradorDAO.editarColaborador(colaborador);
+       if(!mensaje.isError()){
+           Utilidades.mostrarAlertaSimple("Editado exitoso", "El colaborador ha sido editado correctamente", Alert.AlertType.INFORMATION);
+           cerrarVentana();
+           observador.notificarOperacion("Nueva edicion", colaborador.getNombre());
+       } else {
+           Utilidades.mostrarAlertaSimple("ERROR", mensaje.getMensaje(), Alert.AlertType.ERROR);
+       }
+    }
+
+    private void cerrarVentana() {
         Stage base = (Stage) tfNombre.getScene().getWindow();
         base.close();
     }
+
+    public void inicializarValores(NotificadorOperacion observador, Colaborador colaboradorEdicion) {
+        this.colaboradorEdicion = colaboradorEdicion;
+        this.observador = observador;
+        if (colaboradorEdicion != null) {
+            modoEdicion = true;
+            cargarDatosEdicion();
+        }
+    }
+
+    private void cargarDatosEdicion() {
+
+        tfNumeroPersonal.setText(this.colaboradorEdicion.getNoPersonal());
+        tfNombre.setText(this.colaboradorEdicion.getNombre());
+        tfApellidoPaterno.setText(colaboradorEdicion.getApellidoPaterno());
+        tfApellidoMaterno.setText(colaboradorEdicion.getApellidoMaterno());
+        tfCorreo.setText(colaboradorEdicion.getCorreo());
+        tfCurp.setText(colaboradorEdicion.getCurp());
+        tfRfc.setText(colaboradorEdicion.getRfc());
+        tfTelefono.setText(colaboradorEdicion.getTelefono());
+        pfPassword.setText(colaboradorEdicion.getPassword());
+        tfNumeroPersonal.setEditable(false);
+        dpFechaNacimiento.setValue(LocalDate.parse(colaboradorEdicion.getFechaNacimiento()));
+        int posicion = buscarIdRol(this.colaboradorEdicion.getIdRol());
+        cbRol.getSelectionModel().select(posicion);
+
+    }
+
 }

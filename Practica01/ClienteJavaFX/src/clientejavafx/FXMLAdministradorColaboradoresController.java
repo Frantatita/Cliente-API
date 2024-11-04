@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package clientejavafx;
 
+import clientejavafx.observador.NotificadorOperacion;
 import clientejavafx.utilidades.Utilidades;
 import java.io.IOException;
 import java.net.URL;
@@ -34,7 +31,7 @@ import pojo.Colaborador;
  *
  * @author reyes
  */
-public class FXMLAdministradorColaboradoresController implements Initializable {
+public class FXMLAdministradorColaboradoresController implements Initializable, NotificadorOperacion {
 
     private ObservableList<Colaborador> colaboradores;
 
@@ -75,8 +72,39 @@ public class FXMLAdministradorColaboradoresController implements Initializable {
 
     @FXML
     private void agregraColaborador(ActionEvent event) {
+        irFormulario(this, null);
+    }
+    
+    @FXML
+    private void eliminarColaborador(ActionEvent event) {
+       Colaborador colaborador = tablaColaborador.getSelectionModel().getSelectedItem();
+        if(colaborador != null){
+            eliminarColaboradorIdColaborador(colaborador.getIdColaborador());
+        }else{
+            Utilidades.mostrarAlertaSimple("Selecciona", "Por favor seleccionado un colaborador de la tabla", Alert.AlertType.WARNING);
+        }
+    }
+
+    @FXML
+    private void editarColaborador(ActionEvent event) {
+        Colaborador colaborador = tablaColaborador.getSelectionModel().getSelectedItem();
+        if(colaborador != null){
+            irFormulario(this, colaborador);
+        }else{
+            Utilidades.mostrarAlertaSimple("Selecciona", "Por favor seleccionado un colaborador de la tabla", Alert.AlertType.WARNING);
+        }
+        
+    }
+    
+    private void irFormulario(NotificadorOperacion observador, Colaborador colaborador){
         try{
-            Parent root = FXMLLoader.load(getClass().getResource("FXMLFormularioColaboradores.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLFormularioColaboradores.fxml"));
+            Parent root = loader.load();
+            
+            FXMLFormularioColaboradoresController controlador = loader.getController();
+            controlador.inicializarValores(observador, colaborador);
+            
+            //Parent root = FXMLLoader.load(getClass().getResource("FXMLFormularioColaboradores.fxml"));
             Stage escenarioForm = new Stage();
             Scene escenaFormulario = new Scene(root);
             escenarioForm.setScene(escenaFormulario);
@@ -87,16 +115,6 @@ public class FXMLAdministradorColaboradoresController implements Initializable {
         }catch(IOException ex){
             Utilidades.mostrarAlertaSimple("Error", "Lo sentimos", Alert.AlertType.NONE);
         }
-    }
-
-    @FXML
-    private void eliminarColaborador(ActionEvent event) {
-       
-    }
-
-    @FXML
-    private void editarColaborador(ActionEvent event) {
-        
     }
 
     private void configurarTabla() {
@@ -115,7 +133,7 @@ public class FXMLAdministradorColaboradoresController implements Initializable {
         if (listaWS != null) {
             colaboradores.addAll(listaWS);
             tablaColaborador.setItems(colaboradores);
-           // CerrarVentana();
+            //CerrarVentana();
         } else {
             Utilidades.mostrarAlertaSimple("ERROR", "Por el momento no podemos acceder a los datos de los"
                     + "colaboradores, intente mas tarde", Alert.AlertType.ERROR);
@@ -130,6 +148,18 @@ public class FXMLAdministradorColaboradoresController implements Initializable {
         escenarioActual.close(); 
 
        // ((Stage) tfColaborador.getScene().getWindow()).close();
+    }
+    
+    
+    private void eliminarColaboradorIdColaborador(int idColaborador){
+        
+    }
+
+    @Override
+    public void notificarOperacion(String tipo, String nombre) {
+        System.out.println("Tipo de operacion: " + tipo);
+        System.out.println("Nombre: " + nombre);
+        cargarInformacionTabla();
     }
 
 }
