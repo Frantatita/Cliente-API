@@ -1,4 +1,3 @@
-
 package clientejavafx;
 
 import clientejavafx.observador.NotificadorOperacion;
@@ -25,6 +24,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import modelo.dao.ColaboradorDAO;
 import pojo.Colaborador;
+import pojo.Mensaje;
 
 /**
  * FXML Controller class
@@ -60,6 +60,8 @@ public class FXMLAdministradorColaboradoresController implements Initializable, 
     @FXML
     private Button btnEditarColaborador;
 
+    private NotificadorOperacion observador;
+
     /**
      * Initializes the controller class.
      */
@@ -74,13 +76,14 @@ public class FXMLAdministradorColaboradoresController implements Initializable, 
     private void agregraColaborador(ActionEvent event) {
         irFormulario(this, null);
     }
-    
+
     @FXML
     private void eliminarColaborador(ActionEvent event) {
-       Colaborador colaborador = tablaColaborador.getSelectionModel().getSelectedItem();
-        if(colaborador != null){
+        Colaborador colaborador = tablaColaborador.getSelectionModel().getSelectedItem();
+        if (colaborador != null) {
             eliminarColaboradorIdColaborador(colaborador.getIdColaborador());
-        }else{
+            System.out.println("Id colaborador es: " + colaborador.getIdColaborador());
+        } else {
             Utilidades.mostrarAlertaSimple("Selecciona", "Por favor seleccionado un colaborador de la tabla", Alert.AlertType.WARNING);
         }
     }
@@ -88,22 +91,22 @@ public class FXMLAdministradorColaboradoresController implements Initializable, 
     @FXML
     private void editarColaborador(ActionEvent event) {
         Colaborador colaborador = tablaColaborador.getSelectionModel().getSelectedItem();
-        if(colaborador != null){
+        if (colaborador != null) {
             irFormulario(this, colaborador);
-        }else{
+        } else {
             Utilidades.mostrarAlertaSimple("Selecciona", "Por favor seleccionado un colaborador de la tabla", Alert.AlertType.WARNING);
         }
-        
+
     }
-    
-    private void irFormulario(NotificadorOperacion observador, Colaborador colaborador){
-        try{
+
+    private void irFormulario(NotificadorOperacion observador, Colaborador colaborador) {
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLFormularioColaboradores.fxml"));
             Parent root = loader.load();
-            
+
             FXMLFormularioColaboradoresController controlador = loader.getController();
             controlador.inicializarValores(observador, colaborador);
-            
+
             //Parent root = FXMLLoader.load(getClass().getResource("FXMLFormularioColaboradores.fxml"));
             Stage escenarioForm = new Stage();
             Scene escenaFormulario = new Scene(root);
@@ -111,8 +114,8 @@ public class FXMLAdministradorColaboradoresController implements Initializable, 
             escenarioForm.setTitle("Formulario Colaborador");
             escenarioForm.initModality(Modality.APPLICATION_MODAL);
             escenarioForm.showAndWait();
-            
-        }catch(IOException ex){
+
+        } catch (IOException ex) {
             Utilidades.mostrarAlertaSimple("Error", "Lo sentimos", Alert.AlertType.NONE);
         }
     }
@@ -142,18 +145,30 @@ public class FXMLAdministradorColaboradoresController implements Initializable, 
     }
 
     private void CerrarVentana() {
-        
+
         //Una forma de representar lo mismo
         Stage escenarioActual = (Stage) btnEliminarColaborador.getScene().getWindow();
-        escenarioActual.close(); 
+        escenarioActual.close();
 
-       // ((Stage) tfColaborador.getScene().getWindow()).close();
+        // ((Stage) tfColaborador.getScene().getWindow()).close();
     }
-    
-    
-    private void eliminarColaboradorIdColaborador(int idColaborador){
+
+    private void eliminarColaboradorIdColaborador(int idColaborador) {
+    boolean confirmado = Utilidades.mostrarConfirmacion("Confirmar Eliminación", 
+            "¿Estás seguro de que deseas eliminar al colaborador seleccionado?");    
+    if (confirmado) {
+        Mensaje mensaje = ColaboradorDAO.eliminarColaborador(idColaborador);
         
+        if (!mensaje.isError()) {
+            Utilidades.mostrarAlertaSimple("Eliminación Exitosa", "El colaborador ha sido eliminado correctamente", Alert.AlertType.INFORMATION);
+            cargarInformacionTabla();  // Método para refrescar la tabla de colaboradores
+            observador.notificarOperacion("Eliminación", "Colaborador con ID " + idColaborador + " ha sido eliminado");
+        } else {
+            Utilidades.mostrarAlertaSimple("ERROR", mensaje.getMensaje(), Alert.AlertType.ERROR);
+            System.out.println("ERROR: " + mensaje.getMensaje());
+        }
     }
+}
 
     @Override
     public void notificarOperacion(String tipo, String nombre) {
